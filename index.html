@@ -1,0 +1,204 @@
+<html>
+  <head>
+   <link href="css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="utf-8">
+    <title>#DeuRuim</title>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+#map {
+        height: 90%;
+      }
+#floating-panel {
+  position: absolute;
+  top: 75px;
+  left: 25%;
+  z-index: 5;
+  background-color: #e9e5dc;
+  padding: 5px;
+  border: 1px solid #e9e5dc;
+  text-align: center;
+  font-family: 'Roboto','sans-serif';
+  line-height: 30px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .6);
+  border-radius: 4px;
+  padding-left: 10px;
+}
+
+
+.btn { 
+  overflow: hidden;
+  border-width: 0;
+  outline: none;
+  border-radius: 2px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .6);
+  font-size: 14px;
+  height:40px;
+  width:110px;
+  background-color: #F47D33;
+  color: #ecf0f1;
+  transition: background-color .3s;
+}
+
+button.red{
+    background-color: #e74c3c;
+}
+
+.navbar-brand {
+  padding: 0px;
+  height: 65px;
+}
+.navbar-brand>img {
+  height: 100%;
+  padding: 15px;
+      width: auto;
+    height: 7	0px;
+
+}
+.example4 .navbar-brand>img {
+  padding: 7px 14px;
+}
+.navbar navbar-inverse navbar-static-top{
+	margin-bottom: 1px;
+}
+.nav-header{
+    height: 65px;
+}
+
+    </style>
+  </head>
+
+  <body>
+	
+<div class="example3">
+  <nav >
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar3">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="http://disputebills.com"><img src="http://s32.postimg.org/6zn1ywozp/logo.png" alt="Dispute Bills">
+        </a> 	
+      </div>
+      <div id="navbar3" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li class="active"><a href="http://localhost/DeuRuim%20-%20Hackaton/">Início</a></li>
+          <li><a href="http://localhost/DeuRuim%20-%20Hackaton/sobre.html">Sobre</a></li>
+          <li><a href="#">Informações</a></li>
+          <li class="dropdown">
+      </div>
+      <!--/.nav-collapse -->
+    </div>
+    <!--/.container-fluid -->
+  </nav>
+</div>
+
+    <div id="floating-panel">
+     <button class="btn red" type="button" onclick="updatePoints()">Todos</button> 
+     <button class="btn" type="button" onclick="updatePoints(1)">Alerta</button>
+     <button class="btn" type="button" onclick="updatePoints(2)">Assaltos</button> 
+     <button class="btn" type="button" onclick="updatePoints(3)">Assédio</button>  
+     <button class="btn" type="button" onclick="updatePoints(4)">Furtos</button> 
+     <button class="btn" type="button" onclick="updatePoints(5)">Infraestrutura</button>   
+    </div>
+    <div id="map"></div>
+    <script>
+/*
+1- Alerta
+2- Assaltos
+3- Assédio
+4- Furto
+5- Infraestrutura
+6- Outros   
+*/
+
+var map, heatmap;
+var userPoints = [];
+var gmapPoints;
+var radius = 10;
+addPoint(1,-22.8593158,-43.2345178);
+addPoint(2,-22.8573158,-43.2345178);
+addPoint(2,-22.8572158,-43.2345178);
+addPoint(3,-22.8567158,-43.2345178);
+var userLocation = [-22.8606249,-43.2316877]
+function initMap() {
+  map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 15,
+    center: {lat: userLocation[0], lng: userLocation[1]},
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  });
+
+  gmapPoints = new google.maps.MVCArray(getPoints());
+
+  heatmap = new google.maps.visualization.HeatmapLayer({
+    data: gmapPoints,
+    radius: radius
+  });
+  heatmap.setMap(map);
+}
+
+function updatePoints(category){
+    gmapPoints.clear()
+    getPoints(category).forEach(function(p){gmapPoints.push(p)})
+}
+
+function getPoints(category){
+    var filteredPoints = category ? userPoints.filter(function(p){return p.category == category}) : userPoints;
+    return filteredPoints.map(function(p){ return new google.maps.LatLng(p.lat,p.lng) });
+}
+
+function toggleHeatmap(mapNumber) {
+    if(mapNumber == 1){
+        alert("Filtro de assaltos aplicado");
+    }
+}
+
+function changeGradient() {
+  var gradient = [
+    'rgba(0, 255, 255, 0)',
+    'rgba(0, 255, 255, 1)',
+    'rgba(0, 191, 255, 1)',
+    'rgba(0, 127, 255, 1)',
+    'rgba(0, 63, 255, 1)',
+    'rgba(0, 0, 255, 1)',
+    'rgba(0, 0, 223, 1)',
+    'rgba(0, 0, 191, 1)',
+    'rgba(0, 0, 159, 1)',
+    'rgba(0, 0, 127, 1)',
+    'rgba(63, 0, 91, 1)',
+    'rgba(127, 0, 63, 1)',
+    'rgba(191, 0, 31, 1)',
+    'rgba(255, 0, 0, 1)'
+  ]
+  heatmap.set('gradient', heatmap.get('gradient') ? null : gradient);
+}
+
+function changeRadius() {
+  heatmap.set('radius', heatmap.get('radius') ? null : radius = radius + 1);
+}
+
+function changeOpacity() {
+  heatmap.set('opacity', heatmap.get('opacity') ? null : 0.2);
+}
+
+function addPoint(category, lat,lng){
+    userPoints.push({lat: lat, lng: lng, category: category});
+}
+
+    </script>
+        <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+        <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXv5z8AWywdIGKHPETWAIzls36ltSakOM&signed_in=true&libraries=visualization&callback=initMap">
+    </script>
+
+  </body>
+</html>
