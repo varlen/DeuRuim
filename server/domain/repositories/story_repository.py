@@ -5,5 +5,8 @@ class StoryRepository():
     def search_stories(self, tags, start_time):
         raise NotImplementedError
 
+    def find_story(self, id):
+        raise NotImplementedError
+
     def persist_story(self, story):
         raise NotImplementedError

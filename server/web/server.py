@@ -1,13 +1,16 @@
 import json
+import traceback
+import time as timelib
 
 from flask import Flask, request, jsonify
 
 from repositories.in_memory import *
-from deu_ruim.domain.application_services import *
+from deu_ruim.domain.application_services.story_service import *
 
 def render_story(story):
     story_d = story.__dict__.copy()
     story_d['location'] = story_d['location'].__dict__.copy()
+    story_d['tags'] = list(story_d['tags'])
 
     return story_d
 
@@ -16,28 +19,75 @@ def render_stories(stories):
 
 app = Flask(__name__)
 
-story_repository = InMemoryStoryRepository()
-create_story_service = CreateStoryService(story_repository)
-search_story_service = SearchStoryService(story_repository)
+if __name__ == '__main__': path = './stories.pickle'
+elif __name__ == 'deu_ruim.web.server': path =  './deu_ruim/web/repositories/in_memory/stories.pickle'
+else: raise ExecutionPathError
 
-@app.route('/stories', methods=['GET'])
-def get_stories():
-    stories = search_story_service.search_story(["tag"])
-    return jsonify(render_stories(stories))
+story_repository = PersistentStoryRepository(path)
+story_service = StoryService(story_repository)
+
+#Objeto JSON recebido deve conter:
+# id          :  int
+# title       :  string
+# description :  string 
+# location    :  list<Int>
+# tags        :  list<Strings>
+@app.route('/stories/<time>', methods=['GET'])
+def get_stories(time):
+    try:
+        if time == 'all':
+            stories = story_service.get_all_stories()
+            return jsonify(render_stories(stories))
+
+        if time == 'now':
+            time = timelib.time()
+        stories = story_service.get_stories(time)
+        return jsonify(render_stories(stories))
+    except:
+        traceback.print_exc()
+        return 'Erro interno do servidor'
+
 
 @app.route('/stories', methods=['POST'])
 def create_story():
-    story = crate_story_service.create_story(
-            "Deu Ruim",
-            "Deu Ruim Mesmo", 
-            0,
-            0,
-            ["tag"]
-            )
+    try:
+        loadedData = json.loads(request.data)
+        print(loadedData)
+        story = story_service.create_story(
+                loadedData['title'],
+                loadedData['description'],
+                loadedData['location'][0],
+                loadedData['location'][1],
+                loadedData['category'],
+                loadedData['tags'])
+        return jsonify(render_story(story))
+    except:
+        traceback.print_exc()
+        return 'Erro interno do servidor'
 
-    return json.dumps(render_story(story))
+@app.route('/stories/search', methods=['POST'])
+def search_stories():
+    try:
+        data = json.loads(request.data)
+        if 'tags' not in data.keys(): data['tags'] = []
+        stories = story_service.search_story(data['tags'])
+        return jsonify(render_stories(stories))
+    except:
+        traceback.print_exc()
+        return 'Erro interno do servidor'
 
-server_url = '127.0.0.1'
+@app.route('/stories/disqualify', methods=['POST'])
+def disqualify_story():
+    try:
+        data = json.loads(request.data)
+        if 'id' not in data.keys():
+            data['id'] = None
+        story = story_service.disqualify_story(data['id'])
+    except:
+        traceback.print_exc()
+        return 'Erro interno do servidor'
+
+server_url = '0.0.0.0'
 server_port = '5000'
 
 def run():

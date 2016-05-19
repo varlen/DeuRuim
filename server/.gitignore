@@ -92,3 +92,19 @@ ENV/
 # Rope project settings
 .ropeproject
 
+.gitignore~
+__init__.py~
+__main__.py~
+domain/application_services/create_story_service.py~
+domain/encoder.py
+domain/encoder.py~
+domain/entities/story.py~
+domain/teste.py
+domain/teste.py~
+domain/value/location.py~
+run.py~
+server.py~
+web/.__init__.py.swp
+web/__init__.py~
+web/repositories/in_memory/story_repository.py~
+web/server.py~
