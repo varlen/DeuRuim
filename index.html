@@ -96,17 +96,17 @@ button.red:hover{
 <div id="floating-panel">
  <button class="btn red" type="button" onclick="updatePoints()">Todos</button> 
  <button class="btn" type="button" onclick="updatePoints(1)">Alerta</button>
- <button class="btn" type="button" onclick="updatePoints(2)">Assaltos</button> 
+ <button class="btn" type="button" onclick="updatePoints(2)">Assalto</button> 
  <button class="btn" type="button" onclick="updatePoints(3)">Assédio</button>  
  <button class="btn" type="button" onclick="updatePoints(4)">Furtos</button> 
  <button class="btn" type="button" onclick="updatePoints(5)">Infraestrutura</button>   
 </div>
 <div id="map"></div>
-
+<script type="text/javascript" src="http://127.0.0.1:5000/stories/all"></script>
 <script>
 /*
 1- Alerta
-2- Assaltos
+2- Assalto
 3- Assédio
 4- Furto
 5- Infraestrutura
@@ -119,10 +119,32 @@ var gmapPoints;
 var radius = 10;
 
 // Test Points
+/*
 addPoint(1,-22.8593158,-43.2345178);
 addPoint(2,-22.8573158,-43.2345178);
 addPoint(2,-22.8572158,-43.2345178);
-addPoint(3,-22.8567158,-43.2345178);
+addPoint(3,-22.8567158,-43.2345178);*/
+console.log(data['stories'])
+stories = data['stories']
+for (var index = 0; index < stories.length; index++){
+    current_story = stories[index]
+    var cat = -1;
+    if (current_story['category'] == 'Alerta')
+        cat = 1;
+    else if (current_story['category'] == 'Assalto')
+        cat = 2;
+    else if (current_story['category'] == 'Assedio')
+        cat = 3;
+    else if (current_story['category'] == 'Furto' )
+        cat = 4;
+    else if (current_story['category'] == 'Infraestrutura') 
+        cat = 5;
+    else if (current_story['category'] == 'Outros')
+        cat = 6;
+    console.log(current_story['category'],cat,current_story['location']['latitude'],current_story['location']['longitude'])
+    addPoint(cat,current_story['location']['latitude'],current_story['location']['longitude'])
+}
+
 var userLocation = [-22.8606249,-43.2316877]
 
 function initMap() {
