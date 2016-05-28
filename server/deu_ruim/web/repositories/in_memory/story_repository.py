@@ -1,6 +1,21 @@
 from deu_ruim.domain.repositories.story_repository import *
 from copy import deepcopy
 import cPickle as pickle
+
+import json
+from flask import jsonify
+
+def render_story(story):
+    story_d = story.__dict__.copy()
+    story_d['location'] = story_d['location'].__dict__.copy()
+    story_d['tags'] = list(story_d['tags'])
+
+    return story_d
+
+def render_stories(stories):
+    return {'stories': list(map(render_story, stories))}
+
+
 class InMemoryStoryRepository(StoryRepository):
     def __init__(self, stories=[]):
         self.stories = stories
@@ -32,14 +47,20 @@ class PersistentStoryRepository(InMemoryStoryRepository):
     def __init__(self, path):
         self.path = path
         try:
-            stories = pickle.load(open(path, 'rb'))
+            stories = pickle.load(open(path+'stories.pickle', 'rb'))
         except:
-            pickle.dump([],open(path,'wb'))
+            pickle.dump([],open(path+'stories.pickle','wb'))
             stories = []
         InMemoryStoryRepository.__init__(self, stories)
 
 
     def persist_story(self, story):
         story = InMemoryStoryRepository.persist_story(self, story)
-        pickle.dump(self.stories, open(self.path, 'wb'))
+        pickle.dump(self.stories, open(self.path+'stories.pickle', 'wb'))
+        with open(self.path+'json_data.json','w') as f:
+            json.dump(render_stories(self.stories),f)
+        with open(self.path+'json_data.json','r') as f:
+            content = f.readlines().join()
+        with open(self.path+'json_data.json','w') as f:
+            f.write('data = '+content)
         return story

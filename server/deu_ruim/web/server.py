@@ -19,8 +19,8 @@ def render_stories(stories):
 
 app = Flask(__name__)
 
-if __name__ == '__main__': path = './stories.pickle'
-elif __name__ == 'deu_ruim.web.server': path =  './deu_ruim/web/repositories/in_memory/stories.pickle'
+if __name__ == '__main__': path = './'
+elif __name__ == 'deu_ruim.web.server': path =  './deu_ruim/web/repositories/in_memory/'
 else: raise ExecutionPathError
 
 story_repository = PersistentStoryRepository(path)
@@ -29,15 +29,18 @@ story_service = StoryService(story_repository)
 #Objeto JSON recebido deve conter:
 # id          :  int
 # title       :  string
-# description :  string 
+# description :  string
 # location    :  list<Int>
 # tags        :  list<Strings>
+
+
+
 @app.route('/stories/<time>', methods=['GET'])
 def get_stories(time):
     try:
         if time == 'all':
             stories = story_service.get_all_stories()
-            return jsonify(render_stories(stories))
+            return 'var data = '+json.dumps(render_stories(stories))+';'
 
         if time == 'now':
             time = timelib.time()
@@ -48,11 +51,16 @@ def get_stories(time):
         return 'Erro interno do servidor'
 
 
+def parse_data(data):
+    if len(data['location']) != 2: data['location'] = [1337, 1337]
+    return data
+
 @app.route('/stories', methods=['POST'])
 def create_story():
     try:
+        print(request.data)
         loadedData = json.loads(request.data)
-        print(loadedData)
+        loadedData = parse_data(loadedData)
         story = story_service.create_story(
                 loadedData['title'],
                 loadedData['description'],
@@ -64,6 +72,7 @@ def create_story():
     except:
         traceback.print_exc()
         return 'Erro interno do servidor'
+
 
 @app.route('/stories/search', methods=['POST'])
 def search_stories():

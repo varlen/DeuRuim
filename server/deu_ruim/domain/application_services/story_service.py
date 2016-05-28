@@ -6,8 +6,8 @@ class StoryService():
     def __init__(self, story_repository):
         self.story_repository = story_repository
 
-    def create_story(self, title, description, lat, lon, tags=[]):
-        story = Story(None, title, description, Location(lat, lon), tags)
+    def create_story(self, title, description, lat, lon, category, tags=[]):
+        story = Story(None, title, description, Location(lat, lon), category, tags)
         return self.story_repository.persist_story(story)
 
     def search_story(self, tags, time_max=None):

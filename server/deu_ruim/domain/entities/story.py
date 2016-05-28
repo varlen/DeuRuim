@@ -1,6 +1,6 @@
 import time
 class Story():
-    def __init__(self, rid, title, description, location, tags=set([])):
+    def __init__(self, rid, title, description, location, category, tags=set([])):
         self.id = rid
         self.title = title
         self.category  = category

@@ -6,17 +6,21 @@
 #
 
 from flask import Flask, request
+from flask.ext.cors import CORS
 
 app = Flask(__name__)
+CORS(app)
+
 server_url = '127.0.0.1'
 server_port = '5000'
+
 
 @app.route('/stories', methods=['POST'])
 def create_story():
     '''Persiste uma nova denuncia dado informações sobre ela'''
     pass
 
-@app.route('/stories/<story_id>/<amount>', methods=['GET'])
+@app.route('/stories/<story_id>/<amount>', methods=['GET','OPTIONS'])
 def get_stories( story_id, amount):
     '''
         Lista as denuncias persistidas.
