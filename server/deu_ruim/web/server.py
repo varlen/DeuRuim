@@ -6,16 +6,23 @@ from flask import Flask, request, jsonify
 
 from repositories.in_memory import *
 from deu_ruim.domain.application_services.story_service import *
+from deu_ruim.domain.application_services.user_service import *
 
 def render_story(story):
     story_d = story.__dict__.copy()
     story_d['location'] = story_d['location'].__dict__.copy()
     story_d['tags'] = list(story_d['tags'])
-
     return story_d
 
 def render_stories(stories):
     return {'stories': list(map(render_story, stories))}
+
+def render_user(user):
+    user_d = user.__dict__.copy()
+    return user_d
+
+def render_users(users):
+    return {'users': list(map(render_story, users))}
 
 app = Flask(__name__)
 
@@ -25,6 +32,8 @@ else: raise ExecutionPathError
 
 story_repository = PersistentStoryRepository(path)
 story_service = StoryService(story_repository)
+user_repository = PresistentUserRepository(path)
+user_service = UserService(user_repository)
 
 #Objeto JSON recebido deve conter:
 # id          :  int

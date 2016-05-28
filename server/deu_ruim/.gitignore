@@ -107,4 +107,4 @@ server.py~
 web/.__init__.py.swp
 web/__init__.py~
 web/repositories/in_memory/story_repository.py~
-web/server.py~
+*.py~
