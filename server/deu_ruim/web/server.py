@@ -4,7 +4,8 @@ import time as timelib
 
 from flask import Flask, request, jsonify
 
-from repositories.in_memory import *
+from deu_ruim.web.repositories.in_memory.story_repository import *
+from deu_ruim.web.repositories.in_memory.user_repository import *
 from deu_ruim.domain.application_services.story_service import *
 from deu_ruim.domain.application_services.user_service import *
 
@@ -32,7 +33,7 @@ else: raise ExecutionPathError
 
 story_repository = PersistentStoryRepository(path)
 story_service = StoryService(story_repository)
-user_repository = PresistentUserRepository(path)
+user_repository = PersistentUserRepository(path)
 user_service = UserService(user_repository)
 
 #Objeto JSON recebido deve conter:

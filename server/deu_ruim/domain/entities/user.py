@@ -1,5 +1,5 @@
 class User():
-    def __init__(self, uid, name, surname, email, phone=None, msg_preference='email', car_tag):
+    def __init__(self, uid, name, surname, email, phone=None, msg_preference='email', car_tag=None):
         self.uid = uid
         self.name = name
         self.surname = surname
