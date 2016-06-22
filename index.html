@@ -77,7 +77,7 @@ button.red:hover{
   <nav >
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="http://disputebills.com"><img src="http://s32.postimg.org/6zn1ywozp/logo.png" alt="Dispute Bills">
+        <a class="navbar-brand" href="http://hackathon.if.ufrj.br"><img src="http://s32.postimg.org/6zn1ywozp/logo.png" alt="DeuRuim">
         </a> 	
       </div>
       <div id="navbar3" class="navbar-collapse collapse">
@@ -102,7 +102,7 @@ button.red:hover{
  <button class="btn" type="button" onclick="updatePoints(5)">Infraestrutura</button>   
 </div>
 <div id="map"></div>
-<script type="text/javascript" src="http://127.0.0.1:5000/stories/all"></script>
+<script type="text/javascript" src="http://127.0.0.1/stories/all"></script>
 <script>
 /*
 1- Alerta
@@ -144,7 +144,6 @@ for (var index = 0; index < stories.length; index++){
     console.log(current_story['category'],cat,current_story['location']['latitude'],current_story['location']['longitude'])
     addPoint(cat,current_story['location']['latitude'],current_story['location']['longitude'])
 }
-
 var userLocation = [-22.8606249,-43.2316877]
 
 function initMap() {

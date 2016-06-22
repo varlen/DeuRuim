@@ -1,6 +1,7 @@
 import json
 import traceback
 import time as timelib
+import requests
 
 from flask import Flask, request, jsonify
 
@@ -36,6 +37,9 @@ story_service = StoryService(story_repository)
 user_repository = PersistentUserRepository(path)
 user_service = UserService(user_repository)
 
+server_url = '0.0.0.0'
+server_port = '80'
+
 #Objeto JSON recebido deve conter:
 # id          :  int
 # title       :  string
@@ -43,7 +47,11 @@ user_service = UserService(user_repository)
 # location    :  list<Int>
 # tags        :  list<Strings>
 
-
+@app.route('/',defaults={'path':''})
+@app.route('/<path:path>')
+def catch_all(path):
+    response = requests.get('http://'+server_url+':1337/'+path)
+    return response.content
 
 @app.route('/stories/<time>', methods=['GET'])
 def get_stories(time):
@@ -106,8 +114,6 @@ def disqualify_story():
         traceback.print_exc()
         return 'Erro interno do servidor'
 
-server_url = '0.0.0.0'
-server_port = '5000'
 
 def run():
-    app.run(server_url)
+    app.run(host=server_url, port=server_port)
