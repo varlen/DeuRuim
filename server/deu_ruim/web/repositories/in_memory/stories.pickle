@@ -231,6 +231,7 @@ sg21
 F-43.2266491279006
 sbsg22
 I5
+<<<<<<< HEAD
 sba(ideu_ruim.domain.entities.story
 Story
 p78
@@ -269,3 +270,6 @@ F-43.233915232121937
 sbsg22
 I6
 sba.
+=======
+sba.
+>>>>>>> origin/master
